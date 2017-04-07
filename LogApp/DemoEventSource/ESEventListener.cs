@@ -31,6 +31,8 @@ namespace DemoEventSource
 
         public string EventName { get; set; }
 
+        public EventOpcode OpCode { get; set; }
+
         public IDictionary<string, object> Payload { get; set; }
     }
 
@@ -194,6 +196,7 @@ namespace DemoEventSource
                 Level = EventLevelNames[(int)eventSourceEvent.Level],
                 Keywords = HexadecimalNumberPrefix + ((ulong)eventSourceEvent.Keywords).ToString("X16", CultureInfo.InvariantCulture),
                 EventName = eventSourceEvent.EventName,
+                OpCode = eventSourceEvent.Opcode,
             };
 
             try

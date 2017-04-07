@@ -18,7 +18,7 @@ namespace DemoEventSource
                 }
             }
             //EventSourceSamples.AllSamples.Run();
-            Console.WriteLine("Completed");
+            Console.WriteLine("Completed, press any key");
             Console.ReadKey();
         }
     }

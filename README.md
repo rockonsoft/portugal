@@ -1,12 +1,24 @@
-# portugal
+# Portugal Retreat
 
 ## Docker
+To simply run the nanoserver container in interactive mode:
+```
 docker run -it microsoft/nanoserver powershell
+```
+Once inside powershell, execute the following to show OS details
+(Paste into command window not quite working)
+
+```
 gcim Win32_OperatingSystem | select Version, InstallDate, OSArchitecture
-
+```
 ### Build JRE
-
-PS C:\src\demo-portugal> docker build -t winjre .\portugal\docker\windev-jre-8u91
+The JRE images installs java and set some PATH variables.
+To build the images from the docker file: [C:\src\demo-portugal>]
+```
+docker build -t winjre .\portugal\docker\windev-jre-8u91
+```
+The output for the build:
+```
 Sending build context to Docker daemon 57.67 MB
 Step 1/6 : FROM microsoft/windowsservercore
  ---> b4713e4d8bab
@@ -19,7 +31,6 @@ Step 3/6 : RUN powershell start-process -filepath C:\jre-8u91-windows-x64.exe -p
 Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName
 -------  ------    -----      -----     ------     --  -- -----------
      45       4      708      35924       0.45   1736   1 jre-8u91-windows-x64
-
 
  ---> 7f6da18298a2
 Removing intermediate container e4c60944f38d
@@ -36,22 +47,23 @@ Step 6/6 : CMD echo %JAVA_HOME%
  ---> 6fdd27d10cc4
 Removing intermediate container e67f77c24877
 Successfully built 6fdd27d10cc4
+```
 
+Once the build completed
+```
 docker run -it winjre powershell
-Get-ChildItem Env:
+```
+And in the interactive shell: ```Get-ChildItem Env:```
 
 ### Build ES
 
-S C:\src\demo-portugal> docker ps
-CONTAINER ID        IMAGE               COMMAND                   CREATED             STATUS              PORTS                    NAMES
-e7f8591707af        wines               "cmd /S /C ['c:\\el..."   35 seconds ago      Up 5 seconds        0.0.0.0:9200->9200/tcp   elated_knuth
-PS C:\src\demo-portugal> telnet 9200
-Connecting To 9200...Could not open connection to the host, on port 23: Connect failed
-PS C:\src\demo-portugal> docker stop e7f8591707af
-e7f8591707af
-PS C:\src\demo-portugal> docker ps
-CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-PS C:\src\demo-portugal> docker build -t wines  .\portugal\docker\windev-elasticsearch
+The elasticsearch image is based on the JRE image.
+To build the ES images (wines):[C:\src\demo-portugal>]
+``` 
+docker build -t wines  .\portugal\docker\windev-elasticsearch
+```
+With output:
+```
 Sending build context to Docker daemon 90.66 MB
 Step 1/7 : FROM winjre
  ---> 6fdd27d10cc4
@@ -78,13 +90,20 @@ Step 7/7 : EXPOSE 9300
  ---> e1a748139534
 Removing intermediate container 225b2d45e15b
 Successfully built e1a748139534
+```
 
 ### Running elastic
  
+ To run elastic you have to give the contianer more memory:
+ ```
  docker run -it -m 4g -p 9200:9200 wines powershell
+ ```
+ Once inside the container, strart the elasticsearch and test it,
+ taking into account that es takes some time to start.
+```
  C:\elasticsearch-5.0.2\bin\elasticsearch
  curl -Uri http://localhost:9200/_cat/indices?v -UseBasicParsing
-
+```
 
  PS C:\Debug> .\DemoEventSource.exe
 ******************** CustomizedEventSource Demo ********************
